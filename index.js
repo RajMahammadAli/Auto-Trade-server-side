@@ -27,16 +27,6 @@ async function run() {
     const database = client.db("productsDB");
     const userCollection = database.collection("products");
 
-    app.get("/products", async (req, res) => {
-      let query = {};
-      if (req.query?.email) {
-        query = { email: req.query.email };
-      }
-      const cursor = userCollection.find(query);
-      const result = await cursor.toArray();
-      res.send(result);
-    });
-
     app.post("/products", async (req, res) => {
       const product = req.body;
       const result = await userCollection.insertOne(product);
