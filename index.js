@@ -27,6 +27,16 @@ async function run() {
     const database = client.db("productsDB");
     const userCollection = database.collection("products");
 
+    app.get("/products", async (req, res) => {
+      let query = {};
+      if (req.query?.email) {
+        query = { email: req.query.email };
+      }
+      const cursor = userCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     app.post("/products", async (req, res) => {
       const product = req.body;
       const result = await userCollection.insertOne(product);
@@ -34,28 +44,7 @@ async function run() {
       console.log(product);
     });
 
-    app.delete("/products/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const result = await userCollection.deleteOne(query);
-      res.send(result);
-    });
-
-    app.put("/products/:id", async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: new ObjectId(id) };
-      const options = { upsert: true };
-      const updateProduct = req.body;
-      const product = {
-        $set: {
-          image: updateProduct.image,
-          name: updateProduct.name,
-          brand: updateProduct.brand,
-          type: updateProduct.type,
-          price: updateProduct.price,
-          rating: updateProduct.rating,
-        },
-      };
+    
 
       try {
         const result = await userCollection.updateOne(filter, product, options);
