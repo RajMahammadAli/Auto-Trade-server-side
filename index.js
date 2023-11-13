@@ -44,15 +44,11 @@ async function run() {
       console.log(product);
     });
 
-    
-
-      try {
-        const result = await userCollection.updateOne(filter, product, options);
-        res.send(result);
-      } catch (error) {
-        console.error("Error updating product:", error);
-        res.status(500).send("Internal Server Error");
-      }
+    app.delete("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await userCollection.deleteOne(query);
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
